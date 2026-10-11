@@ -4,58 +4,113 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NZ Dog Control Statistics</title>
-  <meta name="description" content="Interactive charts of the annual dog control statistics published by MCERT.">
+  <meta name="description" content="Interactive charts of New Zealand's annual dog control statistics, published by MCERT.">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="page-header">
     <h1>NZ Dog Control Statistics</h1>
-    <p class="lede">Charts of the annual dog control statistics that
-      <a href="https://www.mcert.govt.nz/our-work/local-government/dog-control/dog-control-statistics/">MCERT publishes</a>
-      from the National Dog Database.</p>
+    <p class="lede">Registered dogs, menacing and dangerous classifications, enforcement and
+      dog-related injuries for every council in New Zealand, from the annual statistics
+      <a href="https://www.mcert.govt.nz/our-work/local-government/dog-control/dog-control-statistics/">published by MCERT</a>.</p>
   </header>
 
   <main id="app">
-    <section class="controls" aria-label="Chart controls">
-      <label>Table
-        <select id="dataset"></select>
+    <section class="controls sticky" aria-label="Area and year">
+      <label>Area
+        <select id="area"></select>
       </label>
-      <label>Measure
-        <select id="measure"></select>
-      </label>
-      <label>Sort
-        <select id="sort">
-          <option value="desc">Highest first</option>
-          <option value="asc">Lowest first</option>
-          <option value="name">A–Z</option>
-        </select>
-      </label>
-      <label class="grow">Filter
-        <input id="search" type="search" placeholder="Filter rows, e.g. Auckland">
+      <label>Year (ending 30 June)
+        <select id="year"></select>
       </label>
     </section>
 
-    <section class="tiles" id="tiles" aria-live="polite"></section>
+    <section aria-labelledby="glance-title">
+      <h2 id="glance-title" class="section-title">At a glance</h2>
+      <div class="tiles" id="tiles"></div>
+    </section>
 
-    <section class="card">
+    <section class="card" aria-labelledby="trend-title">
       <div class="card-head">
-        <h2 id="chart-title">Loading…</h2>
-        <div class="view-toggle" role="tablist">
+        <h2 id="trend-title">Trend</h2>
+      </div>
+      <div class="controls inline">
+        <label>Measure
+          <select id="metric"></select>
+        </label>
+        <label>Show as
+          <select id="mode">
+            <option value="count">Count</option>
+            <option value="rate">Rate</option>
+          </select>
+        </label>
+        <label>Compare with
+          <select id="compare"><option value="">Add an area…</option></select>
+        </label>
+      </div>
+      <div id="chips" class="chips"></div>
+      <div id="trend" class="chart"></div>
+      <p id="trend-note" class="notes"></p>
+    </section>
+
+    <section class="card" aria-labelledby="councils-title">
+      <div class="card-head">
+        <h2 id="councils-title">Councils compared</h2>
+        <div class="view-toggle" role="tablist" data-target="councils">
           <button type="button" role="tab" data-view="chart" aria-selected="true">Chart</button>
           <button type="button" role="tab" data-view="table" aria-selected="false">Table</button>
         </div>
       </div>
-      <p id="notes" class="notes"></p>
-      <div id="chart" class="chart"></div>
-      <div id="table" class="table-wrap" hidden></div>
-      <button type="button" id="more" class="more" hidden></button>
-      <p id="footnotes" class="notes"></p>
+      <div class="controls inline">
+        <label>Sort
+          <select id="sort">
+            <option value="desc">Highest first</option>
+            <option value="asc">Lowest first</option>
+            <option value="name">A–Z</option>
+          </select>
+        </label>
+        <label class="grow">Filter
+          <input id="search" type="search" placeholder="e.g. Waikato">
+        </label>
+      </div>
+      <p class="notes" id="councils-note"></p>
+      <div id="councils" class="chart"></div>
+      <div id="councils-table" class="table-wrap" hidden></div>
+      <button type="button" id="councils-more" class="more" hidden></button>
+    </section>
+
+    <section class="card" aria-labelledby="breeds-title">
+      <div class="card-head">
+        <h2 id="breeds-title">Breeds</h2>
+      </div>
+      <div class="controls inline">
+        <label>Measure
+          <select id="breed-metric"></select>
+        </label>
+        <label>Show as
+          <select id="breed-mode">
+            <option value="count">Count</option>
+            <option value="rate">Rate within breed</option>
+          </select>
+        </label>
+        <label class="check">
+          <input type="checkbox" id="breed-groups"> Include cross breeds and other pure breeds
+        </label>
+      </div>
+      <p class="notes" id="breeds-note"></p>
+      <div id="breeds" class="chart"></div>
+      <button type="button" id="breeds-more" class="more" hidden></button>
+    </section>
+
+    <section class="card about" aria-labelledby="about-title">
+      <h2 id="about-title">About the data</h2>
+      <ul id="about"></ul>
     </section>
 
     <section id="empty" class="card empty" hidden>
       <h2>No data yet</h2>
-      <p>Put the MCERT workbook (for example <code>Dog-control-statistics-Nov-2025.xlsx</code>)
-        in <code>data/raw/</code> and run <code>python scripts/build_data.py</code>.</p>
+      <p>Put the MCERT workbook in <code>data/raw/</code> and run
+        <code>python scripts/build_data.py</code>.</p>
     </section>
   </main>
 
