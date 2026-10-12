@@ -19,14 +19,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
       - run: pip install -r requirements.txt
+      - run: npm ci
       - run: python -m unittest discover tests -v
+      - run: npm test
       - run: python scripts/build_data.py
-      - uses: actions/upload-pages-artifact@v3
+      - name: Check council boundaries cover every MCERT council
+        run: node scripts/build_geo.mjs --check site/data/dogs.json --optional
+      - name: Build explorer into site/explore/
+        run: |
+          npm run explore:build
+          rm -rf site/explore
+          cp -r explorer/dist site/explore
+      - uses: actions/upload-pages-artifact@v5
         if: github.event_name != 'pull_request'
         with:
           path: site
@@ -40,4 +53,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
