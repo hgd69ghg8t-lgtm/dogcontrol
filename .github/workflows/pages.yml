@@ -23,9 +23,22 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
       - run: pip install -r requirements.txt
+      - run: npm ci
       - run: python -m unittest discover tests -v
+      - run: npm test
       - run: python scripts/build_data.py
+      - name: Check council boundaries cover every MCERT council
+        run: node scripts/build_geo.mjs --check site/data/dogs.json --optional
+      - name: Build explorer into site/explore/
+        run: |
+          npm run explore:build
+          rm -rf site/explore
+          cp -r explorer/dist site/explore
       - uses: actions/upload-pages-artifact@v5
         if: github.event_name != 'pull_request'
         with:

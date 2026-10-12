@@ -63,7 +63,11 @@ a { color: var(--accent); }
   margin: 0 auto;
   padding: 0 16px;
 }
-.page-header { padding-top: 32px; }
+.page-header { padding-top: 20px; }
+.site-nav { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 0.9rem; margin-bottom: 16px; }
+.site-nav a { color: var(--ink-2); text-decoration: none; }
+.site-nav a:hover { color: var(--accent); }
+.site-nav a[aria-current="page"] { color: var(--ink); font-weight: 600; }
 h1 { font-size: 1.75rem; margin: 0 0 4px; }
 h2 { font-size: 1.05rem; margin: 0; }
 .section-title { margin: 8px 0 10px; }
